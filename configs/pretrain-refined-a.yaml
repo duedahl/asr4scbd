@@ -1,0 +1,98 @@
+# Hyperparameter Tuning
+tune_hyperparams: false                  # Enable Optuna hyperparameter tuning
+
+# Dataset Configuration
+normalize_features: True
+group_by_length: True
+base_path: "."
+dataset_name: "pre_rvi_mdb"
+experiment_name: "pretrain-refined-a"
+dataset_config_names: ["clean", "clean"]  # Required: dataset configurations to use
+dataset_split_names: ["train", "val"]     # Required: corresponding split names
+data_column_name: "traces"                # Column name containing trace data
+
+# Data Preprocessing
+preprocessing_num_workers: 4           # Number of workers for dataset processing (null = auto)
+max_trace_expansion: 5
+
+# Training Parameters
+batch_size: 16                           # Batch size per device for training and evaluation
+learning_rate: 0.00418                   # Initial learning rate
+weight_decay: 0.01                       # Weight decay for regularization
+num_train_epochs: 50                     # Number of training epochs
+# max_train_steps: 600                     # Maximum training steps (overrides num_train_epochs if set)
+gradient_accumulation_steps: 1           # Steps to accumulate gradients before update
+gradient_checkpointing: true             # Enable gradient checkpointing to save memory
+lr_scheduler_type: "linear"              # Learning rate scheduler type
+num_warmup_steps: 100                    # Number of warmup steps for learning rate
+output_dir: null                         # Output directory (auto-generated if null)
+seed: 0                                  # Random seed for reproducibility
+
+# Optimizer Configuration
+adam_beta1: 0.9                          # Adam optimizer beta1 parameter
+adam_beta2: 0.98                         # Adam optimizer beta2 parameter
+adam_epsilon: 1e-6                       # Adam optimizer epsilon parameter
+
+# Logging and Saving
+logging_steps: 1                        # Log training metrics every N steps
+saving_steps: 10                        # Save model checkpoint every N steps
+
+# Audio/Trace Processing Configuration
+sampling_rate: 200000000                 # Sampling rate (200 MHz)
+max_trace_length: 8500                   # Maximum trace length in samples
+min_trace_length: 0                      # Minimum trace length in samples
+pad_to_multiple_of: null                 # Pad sequences to multiple of this value
+
+# Gumbel Softmax Configuration
+max_gumbel_temperature: 2.0              # Maximum temperature for Gumbel softmax
+min_gumbel_temperature: 0.5              # Minimum temperature for Gumbel softmax
+gumbel_temperature_decay: 0.999995       # Temperature decay rate per step
+
+# Masking Configuration for Self-Supervised Learning
+mask_time_prob: 0.3                      # Probability of masking time steps
+mask_time_length: 1                      # Length of each mask span
+
+# Model Architecture Configuration
+model:
+  # Core Architecture
+  hidden_size: 64                        # Hidden dimension size
+  num_hidden_layers: 6                   # Number of transformer layers
+  num_attention_heads: 2                 # Number of attention heads
+  
+  # Feature Extraction (Convolutional Layers)
+  conv_dim: [256, 128, 64]               # Output dimensions for conv layers
+  conv_stride: [2, 2, 1]                 # Stride for conv layers
+  conv_kernel: [8, 4, 3]                 # Kernel sizes for conv layers
+  
+  # Normalization Settings
+  feat_extract_norm: "layer"             # Feature extraction normalization type
+  layer_norm_eps: 1e-5                   # Layer normalization epsilon
+  do_stable_layer_norm: true             # Use stable layer normalization
+  
+  # Quantization/Codebook Parameters
+  vocab_size: 8                          # Vocabulary size for quantization - 5 + 3 (for additional tokens introduced)
+  num_codevectors_per_group: 8           # Codevectors per group
+  num_codevector_groups: 2               # Number of codevector groups
+  num_negatives: 100                     # Number of negative samples for contrastive loss
+  
+  # Regularization
+  hidden_dropout: 0.1                    # Dropout rate for hidden layers
+  attention_dropout: 0.1                 # Dropout rate for attention weights
+  activation_dropout: 0.0                # Dropout rate for activation functions
+  feat_proj_dropout: 0.0                 # Dropout rate for feature projection
+  layerdrop: 0.05                        # Layer drop probability
+  diversity_loss_weight: 0.5             # Weight for diversity loss term
+  
+  # Activation Function
+  hidden_act: "gelu"                     # Activation function type
+  
+  # Additional Masking Parameters
+  mask_feature_prob: 0.0                 # Probability of masking feature dimensions
+  mask_feature_length: 5                 # Length of feature mask spans
+  
+  # CTC Loss Configuration (for compatibility)
+  ctc_loss_reduction: "sum"              # CTC loss reduction method
+  ctc_zero_infinity: false               # Handle infinite CTC loss values
+  
+  # Weight Initialization
+  initializer_range: 0.02                # Range for weight initialization

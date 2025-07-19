@@ -1,0 +1,17 @@
+__pycache__/
+.env
+docker/vscode-server/.vscode-server
+data
+*.wav
+*.npy
+*.db
+.vscode
+.devcontainer
+
+code/wandb
+code/runs
+datasets
+
+# These are generated from their associated notebooks
+code/pretrain.py
+code/finetune.py

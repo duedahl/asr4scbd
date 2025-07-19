@@ -1,0 +1,28 @@
+# Finetuning Config File
+
+# Basic configuration
+TUNE_HYPERPARAMS: false
+INITIAL_WEIGHTS: "./runs/pretrain-full-c-full_pre_rvi_mdb"
+DATASET: "full_rvi_mdb"
+BASE_PATH: "."
+EXPERIMENT_NAME: "finetune-full-c"
+MAX_TRACE_LENGTH: 1000
+MAX_TRACE_EXPANSION: 5
+
+# Override specific fixed hyperparameters
+FIXED_HYPERPARAMS:
+  num_train_steps: 20000
+  group_by_length: False
+  eval_steps: 10
+  logging_steps: 10
+
+# Override tunable hyperparameters
+DEFAULT_TUNABLE_HYPERPARAMS:
+  learning_rate: 0.00044
+  per_device_train_batch_size: 128
+  weight_decay: 0.0015
+  warmup_steps: 82
+  gradient_accumulation_steps: 2
+  freeze_feature_encoder: false
+
+SAMPLING_RATE: 200e6

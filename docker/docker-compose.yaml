@@ -1,0 +1,6 @@
+services:
+  fairseq:
+    build:
+      context: ./fairseq
+      dockerfile: Dockerfile
+    image: fairseq
